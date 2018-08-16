@@ -4,23 +4,31 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jxl.Sheet;
+import jxl.Workbook;
 
 public class ReadAndParseFile {
 
 	@SuppressWarnings("resource")
 	private static int createMavenProject(String path, Scanner scan) throws IOException {
-		String projectName = "", featureFileName = "", feature = "";
+		String projectName = "", featureFileName = "", feature = "", content = "";
 		Matcher featureMatch = null;
+		Sheet sheet = null;
 
 		try {
-			String content = new Scanner(new FileReader(path)).useDelimiter("\\Z").next();
-			featureMatch = Pattern.compile("(Feature:[\\D\\s][^#]+)").matcher(content);
+			sheet = Workbook.getWorkbook(new File (path)).getSheet(0);
+			for (int row = 0; row < sheet.getRows(); row++) {
+				for (int col = 0; col < sheet.getColumns(); col++) {
+					content += sheet.getCell(col, row).getContents() + " ";
+				}
+				content += "\n";
+			}
+			featureMatch = Pattern.compile("(Feature:[\\D\\s][^&]+)").matcher(content);
 		} catch (Exception e) {
 			System.out.println("Error: Incorrect path to csv file, try another one.");
 			return 0;
@@ -58,7 +66,10 @@ public class ReadAndParseFile {
 						+ " -Dpackage=" + projectName + " -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false");
 				BufferedReader reader = 
 						new BufferedReader(new InputStreamReader(p.getInputStream()));
-				while (reader.readLine() != null);
+				String line = "";
+				while ((line = reader.readLine()) != null) {
+					System.out.println(line);
+				};
 				if (p.exitValue() != 0) {
 					System.out.println("Error: Maven is not installed or Java environment variable is not set, try again.");
 					p.destroy();
@@ -77,7 +88,6 @@ public class ReadAndParseFile {
 
 		while (featureMatch.find()) {
 			feature = featureMatch.group(1);
-			feature = feature.replaceAll(",", " ");
 			featureFileName = feature.substring(feature.indexOf(' ') + 1, feature.indexOf('\n') - 3);
 			featureFileName = featureFileName.replaceAll(" ", "_");
 			featureFileName = featureFileName.replaceAll("[\".,\\/#!$%\\\\^&\\*;:{}=\\-'~()?] ", "");
@@ -98,7 +108,6 @@ public class ReadAndParseFile {
 					return 0;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				System.out.println("Error: Path for new project or path to current project does not exist, try again.");
 				return -1;
 			}
