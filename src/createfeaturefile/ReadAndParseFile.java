@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.LinkedHashMap;
@@ -23,7 +22,7 @@ public class ReadAndParseFile {
 		try {
 			Matcher featureMatch = null, scenarioMatch = null, keywordMatch = null;
 			String line, scenario = "";
-
+			
 			br = new BufferedReader(new FileReader(path));
 			while ((line = br.readLine()) != null) {
 				if (line.contains("Feature:")) {
@@ -148,6 +147,7 @@ public class ReadAndParseFile {
 		}
 
 		try {
+			System.out.println("Creating step definitions file...");
 			String stepsDefFile = featureFileName.substring(0, 1).toUpperCase();
 
 			for (int i = 1; i < featureFileName.length(); i++) {
@@ -160,7 +160,9 @@ public class ReadAndParseFile {
 			}
 			stepsDefFile += "Stepdefs";
 			Runtime rt = Runtime.getRuntime();
-			Process p = rt.exec("cmd /c cd " + path + " && mvn test");
+			Process p = rt.exec("cmd /c cd " + path + " && setx JAVA_HOME \"C:/Program Files/Java/jdk1.8.0_172\" && mvn test");
+			
+			@SuppressWarnings("resource")
 			Scanner s = new Scanner(p.getInputStream()).useDelimiter("\\A");
 			String result = s.hasNext() ? s.next() : "";
 			s.close();
@@ -168,7 +170,6 @@ public class ReadAndParseFile {
 
 			Matcher stepsMatch = Pattern.compile("(@Given[\\S\\s]+})").matcher(result);
 			stepsMatch.find();
-			System.out.println(result);
 			File file = new File(path + "/src/test/java/" + projectName + "/" + stepsDefFile + ".java");
 			file.createNewFile();
 			BufferedWriter wr = new BufferedWriter(new FileWriter(file));
