@@ -43,7 +43,7 @@ public class ReadAndParseFile {
 				projectName = path.substring(path.lastIndexOf('/') + 1, path.length());
 				break;
 			} else if (option.equals("2")) {
-				Runtime rt = Runtime.getRuntime();
+				ProcessBuilder build = null;
 				Process p = null;
 
 				System.out.println("Enter new project name:");
@@ -61,19 +61,21 @@ public class ReadAndParseFile {
 					return -1;
 				}
 				System.out.println("Creating new project...");
-				String command = "";
-				if (System.getProperty("os.name").contains("Windows")) {
-					command = "cmd /c cd / && cd " + path;
-				} else {
-					command = "cd / && cd " + path;
-				}
-				p = rt.exec(command + " && mvn archetype:generate -DarchetypeGroupId=io.cucumber "
+				String command = "cd " + path + " && mvn archetype:generate -DarchetypeGroupId=io.cucumber "
 						+ "-DarchetypeArtifactId=cucumber-archetype -DarchetypeVersion=2.3.1.2 -DgroupId=" + projectName + " -DartifactId=" + projectName
-						+ " -Dpackage=" + projectName + " -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false");
-				BufferedReader reader = 
-						new BufferedReader(new InputStreamReader(p.getInputStream()));
-				while (reader.readLine() != null) {
-				};
+						+ " -Dpackage=" + projectName + " -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false";
+				if (System.getProperty("os.name").contains("Windows")) {
+					build = new ProcessBuilder("cmd.exe", "/c", command);
+				} else {
+					build = new ProcessBuilder("cmd.exe", "/c", command);
+				}
+				try {
+					p = build.start();
+					p.waitFor();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (p.exitValue() != 0) {
 					System.out.println("Error: Maven is not installed or Java environment variable is not set, try again.");
 					p.destroy();
@@ -117,6 +119,9 @@ public class ReadAndParseFile {
 			}
 
 			try {
+				ProcessBuilder build = null;
+				Process p = null;
+
 				System.out.println("Creating step definitions file...");
 				String stepsDefFile = featureFileName.substring(0, 1).toUpperCase();
 
@@ -129,8 +134,13 @@ public class ReadAndParseFile {
 					}
 				}
 				stepsDefFile += "Stepdefs";
-				Runtime rt = Runtime.getRuntime();
-				Process p = rt.exec("cmd /c cd " + path + " && mvn test && cd /src/test/java/" + projectName + "rm -r RunCucumberTest.java Stepdefs.java");
+				if (System.getProperty("os.name").contains("Windows")) {
+					build = new ProcessBuilder("cmd.exe", "/c", "cd " + path + " && mvn test");
+				} else {
+					build = new ProcessBuilder("terminal.app", "/c", "cd " + path + " && mvn test");
+				}
+				p = build.start();
+				p.waitFor();
 
 				Scanner s = new Scanner(p.getInputStream()).useDelimiter("\\A");
 				String result = s.hasNext() ? s.next() : "";
@@ -156,6 +166,9 @@ public class ReadAndParseFile {
 			} catch (IllegalStateException e) {
 				System.out.println("Error: Step Definitions file already exist, try again.");
 				return 0;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return 1;
@@ -165,11 +178,11 @@ public class ReadAndParseFile {
 		String path = "";
 		Scanner scan = new Scanner(System.in);
 
-		System.out.println("Enter path to csv file, enter \"0\" to cancel:");
+		System.out.println("Enter path to xls file, enter \"0\" to cancel:");
 		path = scan.nextLine();
 		while (!path.equals("0")) {
 			while (ReadAndParseFile.createMavenProject(path, scan) < 0);
-			System.out.println("Enter another path to csv file, enter \"0\" to cancel:");
+			System.out.println("Enter another path to xls file, enter \"0\" to cancel:");
 			path = scan.nextLine();
 		}
 		System.out.println("Program terminated.");
