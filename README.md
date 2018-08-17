@@ -16,7 +16,11 @@ You can easily run the tool in terminal or Command Line, just use the command:
   java createfeaturefile/ReadAndParseFile
 ```
 ### Important Notes
+
+#### JExcel
 You need to download the JExcel package for eclipse and then add jxl.jar file to your IDE. You can download the file here: https://sourceforge.net/projects/jexcelapi/files/jexcelapi/.
+
+#### Maven/Java
 In order for the tool to run you need to have the latest build of Maven install on your computer, I recommend installing it through Node.js using this command:
 ```
   npm install mvn -g
