@@ -66,9 +66,7 @@ public class ReadAndParseFile {
 						+ " -Dpackage=" + projectName + " -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false");
 				BufferedReader reader = 
 						new BufferedReader(new InputStreamReader(p.getInputStream()));
-				String line = "";
-				while ((line = reader.readLine()) != null) {
-					System.out.println(line);
+				while (reader.readLine() != null) {
 				};
 				if (p.exitValue() != 0) {
 					System.out.println("Error: Maven is not installed or Java environment variable is not set, try again.");
