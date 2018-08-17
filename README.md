@@ -3,7 +3,7 @@
 ## Table of Contents
 * [Running the tool](#running-the-tool)
 * [Important Notes](#important-notes)
-* [Linux/Mac OS (Terminal)](#linux-mac-os-terminal)
+* [Linux/Mac OS (Terminal)](#linux/mac-os-(terminal))
 * [Setting up the iOS Environment](#setting-up-the-ios-environment)
 * [Running Android from the Ionic CLI](#running-android-from-the-ionic-cli)
 * [Running iOS from the Ionic CLI](#running-ios-from-the-ionic-cli)
