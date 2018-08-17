@@ -21,3 +21,7 @@ export PATH=$PATH:$JAVA_HOME
   set JAVA_HOME=<path=to-jdk>
   set PATH=%PATH%;%JAVA_HOME%
 ```
+Currently this tool will only generate the Step Definitions file in the Java language, in order to test the Step Definitions file for each Feature file you must install the Cucumber package through your IDE. IDEs recommended: Eclipse, IntelliJ IDEA, NetBeans
+
+## Known Issues
+As of right now there is an issue with the current jxl.jar package to read in Excel Workbooks of the different extenstions. As of right now, the only Excel extension that can be parsed through is .xls, as shown in the sample.xls file. The tool is currently only formatted to run commands to create the Cucumber projects and Step Definition files through the Command Line on Windows OS, more support will come for Terminal on Mac OS and Linux.
