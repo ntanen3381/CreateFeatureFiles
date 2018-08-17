@@ -61,7 +61,13 @@ public class ReadAndParseFile {
 					return -1;
 				}
 				System.out.println("Creating new project...");
-				p = rt.exec("cmd /c cd / && cd " + path + " && mvn archetype:generate -DarchetypeGroupId=io.cucumber "
+				String command = "";
+				if (System.getProperty("os.name").contains("Windows")) {
+					command = "cmd /c cd / && cd " + path;
+				} else {
+					command = "cd / && cd " + path;
+				}
+				p = rt.exec(command + " && mvn archetype:generate -DarchetypeGroupId=io.cucumber "
 						+ "-DarchetypeArtifactId=cucumber-archetype -DarchetypeVersion=2.3.1.2 -DgroupId=" + projectName + " -DartifactId=" + projectName
 						+ " -Dpackage=" + projectName + " -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false");
 				BufferedReader reader = 
@@ -124,7 +130,7 @@ public class ReadAndParseFile {
 				}
 				stepsDefFile += "Stepdefs";
 				Runtime rt = Runtime.getRuntime();
-				Process p = rt.exec("cmd /c cd " + path + " && mvn test");
+				Process p = rt.exec("cmd /c cd " + path + " && mvn test && cd /src/test/java/" + projectName + "rm -r RunCucumberTest.java Stepdefs.java");
 
 				Scanner s = new Scanner(p.getInputStream()).useDelimiter("\\A");
 				String result = s.hasNext() ? s.next() : "";
