@@ -1,12 +1,10 @@
 package createfeaturefile;
 import java.util.Scanner;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jxl.Sheet;
@@ -67,13 +65,13 @@ public class ReadAndParseFile {
 				if (System.getProperty("os.name").contains("Windows")) {
 					build = new ProcessBuilder("cmd.exe", "/c", command);
 				} else {
-					build = new ProcessBuilder("cmd.exe", "/c", command);
+					// This if for mac and linux but is not complete and does not seem to work
+					build = new ProcessBuilder("/bin/sh", command);
 				}
 				try {
 					p = build.start();
 					p.waitFor();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (p.exitValue() != 0) {
@@ -167,7 +165,6 @@ public class ReadAndParseFile {
 				System.out.println("Error: Step Definitions file already exist, try again.");
 				return 0;
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
